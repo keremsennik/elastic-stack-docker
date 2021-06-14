@@ -63,7 +63,7 @@ For harvesting Nginx access and error logs.
 
 Used modules:
 
-* [nginx]: https://www.elastic.co/guide/en/beats/filebeat/7.13/filebeat-module-nginx.html
+* [nginx]: https://www.elastic.co/guide/en/beats/filebeat/7.13/filebeat-module-nginx.html	"nginx"
 
 ### Heartbeat
 
@@ -76,7 +76,7 @@ For checking service uptime stats:
 
 Used monitor types:
 
-- [tcp]: https://www.elastic.co/guide/en/beats/heartbeat/current/monitor-tcp-options.html
+- [tcp]: https://www.elastic.co/guide/en/beats/heartbeat/current/monitor-tcp-options.html	"tcp"
 
 ### Metricbeat
 
@@ -88,7 +88,7 @@ For collecting system and service metrics:
 
 Used modules:
 
-* [system]: https://www.elastic.co/guide/en/beats/metricbeat/7.13/metricbeat-module-system.html
-* [docker]: https://www.elastic.co/guide/en/beats/metricbeat/7.13/metricbeat-module-docker.html
-* [nginx]: https://www.elastic.co/guide/en/beats/metricbeat/7.13/metricbeat-module-nginx.html
+* [system]: https://www.elastic.co/guide/en/beats/metricbeat/7.13/metricbeat-module-system.html	"system"
+* [docker]: https://www.elastic.co/guide/en/beats/metricbeat/7.13/metricbeat-module-docker.html	"docker"
+* [nginx]: https://www.elastic.co/guide/en/beats/metricbeat/7.13/metricbeat-module-nginx.html	"nginx"
 
