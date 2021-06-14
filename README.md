@@ -41,8 +41,8 @@ Passing an `IConfiguration` instance is optional and by doing so, the agent will
 {
     "ElasticApm": {
     "SecretToken": "",
-    "ServerUrls": "http://localhost:8200", //Set custom APM Server URL (default: http://localhost:8200)
-    "ServiceName" : "MyApp", //allowed characters: a-z, A-Z, 0-9, -, _, and space. Default is the entry assembly of the application
+    "ServerUrls": "http://localhost:8200",
+    "ServiceName" : "MyApp",
   }
 }
 ```
