@@ -1,0 +1,84 @@
+version: '3.5'
+
+services:
+  filebeat:
+    build:
+      context: beats/filebeat/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    image: elastic-stack-docker_filebeat         
+    volumes:
+      - type: bind
+        source: /var/log/nginx
+        target: /var/log/nginx
+        read_only: true
+      - type: volume
+        source: filebeat
+        target: /usr/share/filebeat/data        
+    #networks:
+    #  - elk
+    network_mode: host
+    deploy:
+      mode: replicated
+      replicas: 1      
+
+  heartbeat:
+    build:
+      context: beats/heartbeat/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    image: elastic-stack-docker_heartbeat         
+    volumes:
+      - type: volume
+        source: heartbeat
+        target: /usr/share/heartbeat/data     
+    #networks:
+    #  - elk
+    network_mode: host
+    deploy:
+      mode: replicated
+      replicas: 1      
+      
+  metricbeat:
+    build:
+      context: beats/metricbeat/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    image: elastic-stack-docker_metricbeat         
+    user: root
+    volumes:
+      - type: bind
+        source: /proc
+        target: /hostfs/proc
+        read_only: true
+      - type: bind
+        source: /sys/fs/cgroup
+        target: /hostfs/sys/fs/cgroup
+        read_only: true
+      - type: bind
+        source: /
+        target: /hostfs
+        read_only: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      - type: volume
+        source: metricbeat
+        target: /usr/share/metricbeat/data 
+    #networks:
+    #  - elk            
+    network_mode: host
+    deploy:
+      mode: replicated
+      replicas: 1      
+
+#networks: # in swarm mode
+#  elk:
+#    external: true
+#    name: host
+
+volumes:
+  filebeat:
+  heartbeat:
+  metricbeat:

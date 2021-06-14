@@ -1,0 +1,115 @@
+############################# Heartbeat ######################################
+heartbeat.config.monitors:
+  # Directory + glob pattern to search for configuration files
+  path: ${path.config}/monitors.d/*.yml
+  # If enabled, heartbeat will periodically check the config.monitors path for changes
+  reload.enabled: false
+  # How often to check for changes
+  reload.period: 5s
+
+# Configure monitors inline
+heartbeat.monitors:
+- type: tcp
+  # Set enabled to true (or delete the following line) to enable this example monitor
+  enabled: true
+  # ID used to uniquely identify this monitor in elasticsearch even if the config changes
+  id: uptime-elasticsearch
+  # Human readable display name for this service in Uptime UI and elsewhere
+  name: Elasticsearch
+  hosts: ["tcp://localhost:9200"]
+  schedule: '@every 10s'
+
+- type: tcp
+  # Set enabled to true (or delete the following line) to enable this example monitor
+  enabled: true
+  # ID used to uniquely identify this monitor in elasticsearch even if the config changes
+  id: uptime-kibana
+  # Human readable display name for this service in Uptime UI and elsewhere
+  name: Kibana
+  hosts: ["tcp://localhost:5601"]
+  schedule: '@every 10s'
+
+- type: tcp
+  # Set enabled to true (or delete the following line) to enable this example monitor
+  enabled: true
+  # ID used to uniquely identify this monitor in elasticsearch even if the config changes
+  id: uptime-apm
+  # Human readable display name for this service in Uptime UI and elsewhere
+  name: APM
+  hosts: ["tcp://localhost:8200"]
+  schedule: '@every 10s'
+
+- type: tcp
+  # Set enabled to true (or delete the following line) to enable this example monitor
+  enabled: true
+  # ID used to uniquely identify this monitor in elasticsearch even if the config changes
+  id: uptime-nginx
+  # Human readable display name for this service in Uptime UI and elsewhere
+  name: Nginx
+  hosts: ["tcp://localhost:80"]
+  schedule: '@every 10s'
+
+# ======================= Elasticsearch template setting =======================
+
+setup.template.settings:
+  index.number_of_shards: 1
+  index.codec: best_compression
+  #_source.enabled: false
+
+# =================================== Kibana ===================================
+setup.kibana:
+  host: "localhost:5601"
+
+  # Kibana Space ID
+  # ID of the Kibana Space into which the dashboards should be loaded. By default,
+  # the Default Space will be used.
+  #space.id:
+
+# ================================== Outputs ===================================
+output.elasticsearch:
+  # Array of hosts to connect to.
+  hosts: ["localhost:9200"]
+  username: "elastic"
+  password: "changeme"
+
+# ================================= Processors =================================
+processors:
+  - add_observer_metadata:
+      # Optional, but recommended geo settings for the location Heartbeat is running in
+      #geo:
+        # Token describing this location
+        #name: us-east-1a
+        # Lat, Lon "
+        #location: "37.926868, -78.024902"
+
+# ================================== Logging ===================================
+
+# Sets log level. The default log level is info.
+# Available log levels are: error, warning, info, debug
+#logging.level: debug
+
+# At debug level, you can selectively enable logging only for some components.
+# To enable all selectors use ["*"]. Examples of other selectors are "beat",
+# "publisher", "service".
+#logging.selectors: ["*"]
+
+# ============================== Instrumentation ===============================
+
+# Instrumentation support for the heartbeat.
+#instrumentation:
+    # Set to true to enable instrumentation of heartbeat.
+    #enabled: false
+
+    # Environment in which heartbeat is running on (eg: staging, production, etc.)
+    #environment: ""
+
+    # APM Server hosts to report instrumentation results to.
+    #hosts:
+    #  - http://localhost:8200
+
+    # API Key for the APM Server(s).
+    # If api_key is set then secret_token will be ignored.
+    #api_key:
+
+    # Secret token for the APM Server(s).
+    #secret_token:

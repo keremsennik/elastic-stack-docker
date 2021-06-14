@@ -1,0 +1,122 @@
+# =========================== Modules configuration ============================
+metricbeat.config.modules:
+  # Glob pattern for configuration loading
+  path: ${path.config}/modules.d/*.yml
+
+  # Set to true to enable config reloading
+  reload.enabled: false
+
+  # Period on which files under path should be checked for changes
+  #reload.period: 10s
+
+metricbeat.modules:
+- module: docker
+  metricsets:
+    - "container"
+    - "cpu"
+    - "diskio"
+    - "healthcheck"
+    - "info"
+    - "image"
+    - "memory"
+    - "network"
+  hosts: ["unix:///var/run/docker.sock"]
+  period: 10s
+  enabled: true
+- module: system
+  metricsets:
+    - cpu             # CPU usage
+    - load            # CPU load averages
+    - memory          # Memory usage
+    - network         # Network IO
+    - process         # Per process metrics
+    - process_summary # Process summary
+    - uptime          # System Uptime
+    - socket_summary  # Socket summary
+    #- core           # Per CPU core usage
+    #- diskio         # Disk IO
+    #- filesystem     # File system usage for each mountpoint
+    #- fsstat         # File system summary metrics
+    #- raid           # Raid
+    #- socket         # Sockets and connection info (linux only)
+    #- service        # systemd service information
+  enabled: true
+  period: 10s
+  processes: ['.*']
+  # Configure the mount point of the host’s filesystem for use in monitoring a host from within a container
+  system.hostfs: "/hostfs"
+  # Configure the metric types that are included by these metricsets.
+  cpu.metrics:  ["percentages","normalized_percentages"]  # The other available option is ticks.
+  core.metrics: ["percentages"]  # The other available option is ticks.
+- module: nginx
+  metricsets: ["stubstatus"]
+  enabled: true
+  period: 10s
+  # Nginx hosts
+  hosts: ["http://localhost:8080"]
+  # Path to server status. Default nginx_status
+  server_status_path: "stubstatus"
+  
+# ======================= Elasticsearch template setting =======================
+setup.template.settings:
+  index.number_of_shards: 1
+  index.codec: best_compression
+  #_source.enabled: false
+
+# ================================= Dashboards =================================
+setup.dashboards.enabled: true
+
+# =================================== Kibana ===================================
+setup.kibana:
+  host: "localhost:5601" #network_mode: host
+
+  # Kibana Space ID
+  # ID of the Kibana Space into which the dashboards should be loaded. By default,
+  # the Default Space will be used.
+  #space.id:
+
+# ================================== Outputs ===================================
+output.elasticsearch:
+  # Array of hosts to connect to.
+  hosts: ["localhost:9200"] #network_mode: host
+  username: "elastic"
+  password: "changeme"
+
+# ================================= Processors =================================
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
+
+# ================================== Logging ===================================
+
+# Sets log level. The default log level is info.
+# Available log levels are: error, warning, info, debug
+#logging.level: debug
+
+# At debug level, you can selectively enable logging only for some components.
+# To enable all selectors use ["*"]. Examples of other selectors are "beat",
+# "publisher", "service".
+#logging.selectors: ["*"]
+
+# ============================== Instrumentation ===============================
+
+# Instrumentation support for the metricbeat.
+#instrumentation:
+    # Set to true to enable instrumentation of metricbeat.
+    #enabled: false
+
+    # Environment in which metricbeat is running on (eg: staging, production, etc.)
+    #environment: ""
+
+    # APM Server hosts to report instrumentation results to.
+    #hosts:
+    #  - http://localhost:8200
+
+    # API Key for the APM Server(s).
+    # If api_key is set then secret_token will be ignored.
+    #api_key:
+
+    # Secret token for the APM Server(s).
+    #secret_token:

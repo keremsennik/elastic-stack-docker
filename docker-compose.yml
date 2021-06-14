@@ -1,0 +1,86 @@
+version: '3.5'
+
+services:
+  elasticsearch: #http://localhost:9200/_cluster/health
+    build:
+      context: elasticsearch/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    image: elastic-stack-docker_elasticsearch
+    environment:
+      ES_JAVA_OPTS: "-Xmx512m -Xms512m"
+      ELASTIC_PASSWORD: changeme
+      discovery.type: single-node
+    ulimits:
+      memlock:
+        hard: -1
+        soft: -1
+    volumes:
+      - type: bind
+        source: ./elasticsearch/elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+      - type: volume
+        source: elasticsearch
+        target: /usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - elk
+    deploy:
+      mode: replicated
+      replicas: 1    
+
+  kibana: #http://localhost:5601/api/status
+    depends_on:
+      - elasticsearch
+    build:
+      context: kibana/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    image: elastic-stack-docker_kibana        
+    volumes:
+      - type: bind
+        source: ./kibana/kibana.yml
+        target: /usr/share/kibana/config/kibana.yml
+        read_only: true
+      - type: volume
+        source: kibana
+        target: /usr/share/kibana/data        
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    deploy:
+      mode: replicated
+      replicas: 1      
+
+  apm-server: #http://localhost:8200/
+    depends_on:
+      - elasticsearch
+    build:
+      context: apm-server/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    image: elastic-stack-docker_apm-server              
+    volumes:
+      - type: volume
+        source: apm-server
+        target: /usr/share/apm-server/data         
+    ports:
+      - '8200:8200'
+    networks:
+      - elk
+    deploy:
+      mode: replicated
+      replicas: 1      
+
+networks:
+  elk: 
+    driver: bridge #overlay in swarm mode
+    name: elk
+
+volumes:
+  elasticsearch:
+  kibana:
+  apm-server:
