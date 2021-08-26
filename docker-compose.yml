@@ -64,6 +64,9 @@ services:
         ELK_VERSION: $ELK_VERSION
     image: elastic-stack-docker_apm-server              
     volumes:
+      - type: bind
+        source: ./apm-server/apm-server.yml
+        target: /usr/share/apm-server/apm-server.yml
       - type: volume
         source: apm-server
         target: /usr/share/apm-server/data         
